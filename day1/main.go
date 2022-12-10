@@ -18,21 +18,20 @@ func main() {
 	buf := bytes.NewBuffer(bs)
 	scanner := bufio.NewScanner(buf)
 
-	count := 0
+	num := 0
 	elves := make(map[int]int)
 	for scanner.Scan() {
-
 		text := scanner.Text()
-
-		if text != "" {
-			v, err := strconv.Atoi(text)
-			if err != nil {
-				log.Printf("Unable to parse: %s", text)
-			}
-			elves[count] += v
-		} else {
-			count++
+		if text == "" {
+			num++
+			continue
 		}
+
+		v, err := strconv.Atoi(text)
+		if err != nil {
+			log.Printf("Unable to parse calories value: %s", text)
+		}
+		elves[num] += v
 	}
 
 	out := make([]int, 0)
@@ -41,12 +40,12 @@ func main() {
 	}
 
 	sort.Sort(sort.Reverse(sort.IntSlice(out)))
-	log.Printf("%v", out[:3])
+	log.Printf("Top 3 elves: %v", out[:3])
 
+	top3 := out[:3]
 	sum := 0
-	for _, v := range out[:3] {
+	for _, v := range top3 {
 		sum += v
 	}
-
 	log.Printf("result is: %v", sum)
 }
