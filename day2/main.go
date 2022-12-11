@@ -54,7 +54,7 @@ func (t turn) MyScore() int {
 }
 
 func main() {
-	f, err := os.Open("./data.txt")
+	f, err := os.Open("./input1.txt")
 	if err != nil {
 		log.Fatalf("Unable to read file: %v", err)
 	}
