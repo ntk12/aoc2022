@@ -13,6 +13,51 @@ const (
 	scissors = 3
 )
 
+const (
+	win  = 6
+	draw = 3
+	lost = 0
+)
+
+func Game2(op, end string) int {
+	// A for Rock, B for Paper, and C for Scissors
+
+	// X means you need to lose,
+	// Y means you need to end the round in a draw,
+	// Z means you need to win
+	switch op {
+	case "A": // rock
+		switch end {
+		case "X": // lose, you need to choose paper
+			return lost + scissors
+		case "Y": // draw, you need to choose rock
+			// you are rock
+			return draw + rock
+		case "Z": // win, you need to choose paper
+			return win + paper
+		}
+	case "B": // paper
+		switch end {
+		case "X": // lost
+			return lost + rock
+		case "Y": // draw
+			return draw + paper
+		case "Z": // win
+			return win + scissors
+		}
+	case "C": // scissors
+		switch end {
+		case "X": // lose
+			return lost + paper
+		case "Y": // draw
+			return draw + scissors
+		case "Z": // win
+			return win + rock
+		}
+	}
+	return 0
+}
+
 func Game(op, you string) int {
 	var turnScore int
 	switch you {
@@ -25,12 +70,6 @@ func Game(op, you string) int {
 	default:
 		panic("invalid value")
 	}
-
-	const (
-		win  = 6
-		draw = 3
-		lost = 0
-	)
 
 	// A for Rock, B for Paper, and C for Scissors
 	// X for Rock, Y for Paper, and Z for Scissors
@@ -67,7 +106,7 @@ func Game(op, you string) int {
 }
 
 func main() {
-	f, err := os.Open("./input1.txt")
+	f, err := os.Open("./input2.txt")
 	if err != nil {
 		log.Fatalf("Unable to read file: %v", err)
 	}
@@ -84,7 +123,7 @@ func main() {
 			continue
 		}
 		op, you := words[0], words[1]
-		total += Game(op, you)
+		total += Game2(op, you)
 	}
 
 	log.Printf("Score is: %d\n", total)
