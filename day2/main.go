@@ -13,7 +13,19 @@ const (
 	scissors = 3
 )
 
-func matchScore(left, right string) int {
+func Game(op, you string) int {
+	var turnScore int
+	switch you {
+	case "X":
+		turnScore = 1
+	case "Y":
+		turnScore = 2
+	case "Z":
+		turnScore = 3
+	default:
+		panic("invalid value")
+	}
+
 	const (
 		win  = 6
 		draw = 3
@@ -22,35 +34,36 @@ func matchScore(left, right string) int {
 
 	// A for Rock, B for Paper, and C for Scissors
 	// X for Rock, Y for Paper, and Z for Scissors
-	isDraw := left == "A" && right == "X" || left == "B" && right == "Y" || left == "C" && right == "Z"
-
-	isWin := left == "A" && right == "Y" ||
-		left == "B" && right == "Z" ||
-		left == "C" && right == "X"
-
-	if isDraw {
-		return draw
+	switch op {
+	case "A": // rock
+		switch you {
+		case "X": // rock => draw
+			return turnScore + draw
+		case "Y": // paper => lost
+			return turnScore + win
+		case "Z": // scissor => win
+			return turnScore + lost
+		}
+	case "B": // paper
+		switch you {
+		case "X": // rock => lost
+			return turnScore + lost
+		case "Y": // paper => draw
+			return turnScore + draw
+		case "Z": // scissor => lost
+			return turnScore + win
+		}
+	case "C": // scissors
+		switch you {
+		case "X": // rock => lost
+			return turnScore + win
+		case "Y": // paper =>  win
+			return turnScore + lost
+		case "Z": // draw
+			return turnScore + draw
+		}
 	}
-
-	if isWin {
-		return win
-	}
-	return lost
-}
-
-type turn string
-
-func (t turn) MyScore() int {
-	switch t {
-	case "X": // rock
-		return 1
-	case "Y":
-		return 2
-	case "Z":
-		return 3
-
-	}
-	panic("invalid value")
+	return 0
 }
 
 func main() {
@@ -60,16 +73,18 @@ func main() {
 	}
 	defer f.Close()
 	sc := bufio.NewScanner(f)
+	sc.Split(bufio.ScanLines)
 
 	total := 0
 	for sc.Scan() {
 		line := sc.Text()
-		splitedLine := strings.Split(strings.TrimSuffix(line, "\n"), " ")
-		left, right := strings.TrimSpace(splitedLine[0]), strings.TrimSpace(splitedLine[1])
-		winScore := matchScore(left, right)
-
-		total += winScore + turn(right).MyScore()
-
+		words := strings.Split(line, " ")
+		if len(words) != 2 {
+			log.Printf("Invalid data for line")
+			continue
+		}
+		op, you := words[0], words[1]
+		total += Game(op, you)
 	}
 
 	log.Printf("Score is: %d\n", total)
